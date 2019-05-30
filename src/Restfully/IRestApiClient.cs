@@ -9,7 +9,7 @@
         /// Sends the specified request and returns a response.
         /// </summary>
         /// <param name="restApiRequest">A <see cref="IRestApiRequest"/> that represents the HTTP request.</param>
-        /// <returns>A <see cref="IRestApiResponse"/></returns>
+        /// <returns>A <see cref="IRestApiResponse"/> representing the response from the server.</returns>
         IRestApiResponse Send(IRestApiRequest restApiRequest);
     }
 }

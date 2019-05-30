@@ -21,7 +21,11 @@
         {
         }
 
-        protected new IAsyncRestApiClient Client => (IAsyncRestApiClient)base.Client;
+        /// <summary>
+        /// Gets the REST API client.
+        /// </summary>
+        protected new IAsyncRestApiClient Client =>
+            (IAsyncRestApiClient)base.Client;
 
         /// <summary>
         /// Performs a GET request with the specified data asynchronously.
@@ -31,7 +35,7 @@
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>An object based on the server response.</returns>
         public async Task<TEntity> GetRequestAsync<TEntity>(object data, CancellationToken cancellationToken) =>
-            await GetRequestAsync<TEntity>(string.Empty, data, cancellationToken);
+            await GetRequestAsync<TEntity>(string.Empty, data, cancellationToken).ConfigureAwait(false);
 
         /// <summary>
         /// Performs a GET request to the specified resource with the specified data asynchronously.
@@ -52,7 +56,7 @@
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>An object based on the server response.</returns>
         public async Task<TEntity> PostRequestAsync<TEntity>(object data, CancellationToken cancellationToken) =>
-            await PostRequestAsync<TEntity>(string.Empty, data, cancellationToken);
+            await PostRequestAsync<TEntity>(string.Empty, data, cancellationToken).ConfigureAwait(false);
 
         /// <summary>
         /// Performs a POST request to the specified resource with the specified data asynchronously.
@@ -60,7 +64,7 @@
         /// <typeparam name="TEntity">The type of response data.</typeparam>
         /// <param name="resource">The resource to post the data to.</param>
         /// <param name="data">The data to supply with the request.</param>
-        /// <param name="cancellationToken">The cancellation token</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>An object based on the server response.</returns>
         public async Task<TEntity> PostRequestAsync<TEntity>(string resource, object data, CancellationToken cancellationToken) =>
             await RunRequestAsync<TEntity>(resource, "POST", data, cancellationToken).ConfigureAwait(false);
@@ -72,7 +76,9 @@
                 .SendAsync(request, cancellationToken)
                 .ConfigureAwait(false);
 
-            var entity = DeserializeResponse<TEntity>(response);
+            ThrowOnError(response);
+            var entity = Serializer.Deserialize<TEntity>(response.Content);
+            SetEntityResponse(response, entity);
             return entity;
         }
     }

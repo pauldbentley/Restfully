@@ -2,40 +2,72 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Net;
 
-    [DebuggerDisplay("{" + nameof(DebuggerDisplay) + "()}")]
+    /// <summary>
+    /// Represents a request which can be sent to a RESTful API service.
+    /// </summary>
     public class RestApiRequest : IRestApiRequest
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RestApiRequest"/> class.
+        /// </summary>
+        /// <param name="baseAddress">The base address of the REST API to request.</param>
+        /// <param name="endpoint">The end point of the service to request.</param>
+        public RestApiRequest(Uri baseAddress, Uri endpoint)
+        {
+            BaseAddress = baseAddress ?? throw new ArgumentNullException(nameof(baseAddress));
+            Endpoint = endpoint ?? throw new ArgumentNullException(nameof(endpoint));
+        }
+
+        /// <summary>
+        /// Gets or sets the body of the request.
+        /// </summary>
         public object Body { get; set; }
 
+        /// <summary>
+        /// Gets the headers sent with the request.
+        /// </summary>
         public IDictionary<string, string> Headers { get; } = new Dictionary<string, string>();
 
+        /// <summary>
+        /// Gets or sets the request method.
+        /// </summary>
         public string Method { get; set; }
 
+        /// <summary>
+        /// Gets the parameters sent with the request.
+        /// </summary>
         public IDictionary<string, object> Parameters { get; } = new Dictionary<string, object>();
 
-        public Uri BaseAddress { get; set; }
+        /// <summary>
+        /// Gets the base address of the REST API to request.
+        /// </summary>
+        public Uri BaseAddress { get; }
 
-        public Uri Endpoint { get; set; }
+        /// <summary>
+        /// Gets the end point of the service to request.
+        /// </summary>
+        public Uri Endpoint { get; }
 
+        /// <summary>
+        /// Gets or sets the timeout in milliseconds to use for requests made.
+        /// </summary>
         public int Timeout { get; set; }
 
+        /// <summary>
+        /// Gets or sets the content type.
+        /// </summary>
         public string ContentType { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether redirects should be automatically followed.
+        /// </summary>
         public bool AllowAutoRedirect { get; set; }
 
+        /// <summary>
+        /// Gets or sets the proxy access for the request.
+        /// </summary>
         public IWebProxy Proxy { get; set; }
-
-        private object DebuggerDisplay()
-        {
-            if (Endpoint != null)
-            {
-                return Endpoint;
-            }
-
-            return this;
-        }
     }
 }

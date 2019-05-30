@@ -35,8 +35,14 @@
         /// </summary>
         public Uri BaseUri { get; }
 
+        /// <summary>
+        /// Gets the service to serialize/deserialize responses from the API.
+        /// </summary>
         protected IJsonSerializationService Serializer { get; }
 
+        /// <summary>
+        /// Gets the client to make requests to the API.
+        /// </summary>
         protected IRestApiClient Client { get; }
 
         /// <summary>
@@ -100,16 +106,21 @@
         protected virtual Exception HandleError(IRestApiResponse response) =>
             response.ErrorException ?? new Exception(response.ErrorMessage);
 
+        /// <summary>
+        /// Builds an <see cref="IRestApiRequest"/>.
+        /// </summary>
+        /// <param name="resource">The resource being requested.</param>
+        /// <param name="method">The request method.</param>
+        /// <param name="data">The data being sent with the request.</param>
+        /// <returns>An <see cref="IRestApiRequest"/> with the relevant information set.</returns>
         protected IRestApiRequest BuildRequest(string resource, string method, object data)
         {
             BeforeSend(data);
 
-            var input = new RestApiRequest
+            var input = new RestApiRequest(BaseUri, GetEndpoint(resource))
             {
-                BaseAddress = BaseUri,
                 ContentType = "text/json",
-                Endpoint = GetEndpoint(resource),
-                Method = method
+                Method = method,
             };
 
             if (method == "POST")
@@ -134,11 +145,21 @@
             return input;
         }
 
+        /// <summary>
+        /// Gets the Endpoint URI for the given resource from the service path.
+        /// </summary>
+        /// <param name="resource">The resource being requested.</param>
+        /// <returns>A <see cref="Uri"/> pointing to the resource from the service path.</returns>
         protected Uri GetEndpoint(string resource)
         {
             return new Uri(string.IsNullOrWhiteSpace(resource) ? Path : $"{Path}/{resource}", UriKind.Relative);
         }
 
+        /// <summary>
+        /// Gets the entity response property on the entity.
+        /// </summary>
+        /// <param name="response">The response from the server.</param>
+        /// <param name="entity">The entity returned from the service.</param>
         protected void SetEntityResponse(IRestApiResponse response, object entity)
         {
             if (entity == null)
@@ -156,6 +177,10 @@
             EntityResponseHelper.SetResponse(entity, entityResponse);
         }
 
+        /// <summary>
+        /// If the response did not return an OK status, throws an Exception.
+        /// </summary>
+        /// <param name="response">The response from the service.</param>
         protected void ThrowOnError(IRestApiResponse response)
         {
             if (response.StatusCode != HttpStatusCode.OK)
@@ -164,19 +189,13 @@
             }
         }
 
-        protected TEntity DeserializeResponse<TEntity>(IRestApiResponse response)
-        {
-            ThrowOnError(response);
-            var entity = Serializer.Deserialize<TEntity>(response.Content);
-            SetEntityResponse(response, entity);
-            return entity;
-        }
-
         private TEntity RunRequest<TEntity>(string resource, string method, object data)
         {
             var request = BuildRequest(resource, method, data);
             var response = Client.Send(request);
-            var entity = DeserializeResponse<TEntity>(response);
+            ThrowOnError(response);
+            var entity = Serializer.Deserialize<TEntity>(response.Content);
+            SetEntityResponse(response, entity);
             return entity;
         }
     }

@@ -25,10 +25,7 @@
             }
 
             var property = GetResponseProperty(value);
-
-            return property != null
-                ? property.GetValue(value)
-                : null;
+            return property?.GetValue(value);
         }
 
         /// <summary>

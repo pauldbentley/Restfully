@@ -42,7 +42,7 @@
         /// <typeparam name="T">The type of response data.</typeparam>
         /// <param name="resource">The resource to post the data to.</param>
         /// <param name="data">The data to supply with the request.</param>
-        /// <param name="cancellationToken">The cancellation token</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>An object based on the server response.</returns>
         Task<T> PostRequestAsync<T>(string resource, object data, CancellationToken cancellationToken);
     }

@@ -13,26 +13,18 @@
         string Serialize(object value);
 
         /// <summary>
-        /// 
+        /// Deserializes a JSON string to an object.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        string Serialize<T>(T value);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="value"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">The type of value to deserialize.</typeparam>
+        /// <param name="value">A JSON string to deserialize.</param>
+        /// <returns>An object deserialized from the JSON string.</returns>
         T Deserialize<T>(string value);
 
         /// <summary>
-        /// 
+        /// Deserializes a JSON string to an object.
         /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
+        /// <param name="value">A JSON string to deserialize.</param>
+        /// <returns>An object deserialized from the JSON string.</returns>
         object Deserialize(string value);
     }
 }
