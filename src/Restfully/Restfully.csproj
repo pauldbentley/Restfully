@@ -12,7 +12,9 @@
     <RepositoryUrl>https://github.com/pauldbentley/Restfully</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>REST,RESTful</PackageTags>
-    <FileVersion>0.0.1.1</FileVersion>
+    <FileVersion>0.0.1.2</FileVersion>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Copyright>Copyright(c) 2019 Paul Bentley</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
