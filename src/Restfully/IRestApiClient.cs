@@ -19,11 +19,33 @@
 // SOFTWARE.
 namespace Restfully
 {
+    using System.Net;
+
     /// <summary>
     /// Generic client for sending HTTP requests to a RESTful API server.
     /// </summary>
     public interface IRestApiClient
     {
+        /// <summary>
+        /// Gets a value indicating whether redirects should be automatically followed.
+        /// </summary>
+        bool AllowAutoRedirect { get; }
+
+        /// <summary>
+        /// Gets a timeout in milliseconds to use for requests made by the client.
+        /// </summary>
+        int? HttpTimeout { get; }
+
+        /// <summary>
+        /// Gets a proxy to use for requests made to the service.
+        /// </summary>
+        IWebProxy Proxy { get; }
+
+        /// <summary>
+        /// Gets the content type.
+        /// </summary>
+        string ContentType { get; }
+
         /// <summary>
         /// Sends the specified request and returns a response.
         /// </summary>

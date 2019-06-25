@@ -25,7 +25,7 @@ namespace Restfully
     /// <summary>
     /// A RESTful API service which can be sent async GET and POST requests.
     /// </summary>
-    public interface IAsyncRestApiService : IRestApiService
+    public interface IAsyncRestApiService
     {
         /// <summary>
         /// Performs a GET request with the specified data asynchronously.

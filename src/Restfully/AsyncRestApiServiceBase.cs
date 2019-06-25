@@ -26,7 +26,7 @@ namespace Restfully
     /// <summary>
     /// Base class for a RESTful API service.
     /// </summary>
-    public abstract class AsyncRestApiServiceBase : RestApiServiceBase, IAsyncRestApiService
+    public abstract class AsyncRestApiServiceBase : RestApiServiceLayer, IAsyncRestApiService
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="AsyncRestApiServiceBase"/> class with the specified base URL and service path.
@@ -95,10 +95,7 @@ namespace Restfully
                 .SendAsync(request, cancellationToken)
                 .ConfigureAwait(false);
 
-            ThrowOnError(response);
-            var entity = Serializer.Deserialize<TEntity>(response.Content);
-            SetEntityResponse(response, entity);
-            return entity;
+            return BuildResponse<TEntity>(response);
         }
     }
 }
