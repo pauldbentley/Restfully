@@ -6,7 +6,7 @@ namespace Restfully
     using System;
 
     /// <summary>
-    /// Base class for a synchronous RESTful API service.
+    /// Base class for a RESTful API service.
     /// </summary>
     public class ApiService : ApiServiceBase, IApiService
     {

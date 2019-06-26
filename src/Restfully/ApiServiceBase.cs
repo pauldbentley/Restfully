@@ -32,7 +32,6 @@ namespace Restfully
         {
             BaseUri = baseUrl ?? throw new ArgumentNullException(nameof(baseUrl));
             Path = path;
-
             Serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
         }
 
@@ -121,19 +120,26 @@ namespace Restfully
             if (method == HttpPost)
             {
                 // for POST we add the JSON directly to the body
-                request.Body = Serializer.Serialize(data);
+                if (data != null)
+                {
+                    request.Body = Serializer.Serialize(data);
+                }
             }
             else if (method == HttpGet)
             {
                 // for GET we add a query string parameters
                 // We serialize to JSON then back to an object so that
                 // the SerializerSettings are followed
-                string json = Serializer.Serialize(data);
-                var values = Serializer.Deserialize<Dictionary<string, object>>(json);
-
-                foreach (var value in values)
+                // if we have any data
+                if (data != null)
                 {
-                    request.Parameters.Add(value.Key, value.Value);
+                    string json = Serializer.Serialize(data);
+                    var values = Serializer.Deserialize<Dictionary<string, object>>(json);
+
+                    foreach (var value in values)
+                    {
+                        request.Parameters.Add(value.Key, value.Value);
+                    }
                 }
             }
 

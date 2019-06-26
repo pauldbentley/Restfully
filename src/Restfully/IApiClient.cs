@@ -5,6 +5,7 @@ namespace Restfully
 {
     /// <summary>
     /// Generic client for sending HTTP requests to a RESTful API server.
+    /// Implement this interface with your own implementation e.g. using RestSharp.
     /// </summary>
     public interface IApiClient
     {
