@@ -7,7 +7,7 @@ namespace Restfully
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Generic client for sending HTTP requests to a RESTful API server.
+    /// Generic client for sending sync/async HTTP requests to a RESTful API server.
     /// Implement this interface with your own implementation e.g. using RestSharp.
     /// </summary>
     public interface IApiClient

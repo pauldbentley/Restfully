@@ -10,7 +10,7 @@ namespace Restfully
     /// <summary>
     /// Base class for a RESTful API service.
     /// </summary>
-    public abstract class ApiService : ApiServiceBase, IApiService, IAsyncApiService
+    public abstract class ApiService : ApiServiceBase, IApiService
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ApiService"/> class with the specified base URL and service path.
@@ -112,7 +112,6 @@ namespace Restfully
 
         private TEntity RunRequest<TEntity>(string resource, string method, object data)
         {
-            BeforeSend(data);
             var request = BuildRequest(resource, method, data);
             var response = Client.Send(request);
             return BuildResponse<TEntity>(response);
@@ -120,7 +119,6 @@ namespace Restfully
 
         private async Task<TEntity> RunRequestAsync<TEntity>(string resource, string method, object data, CancellationToken cancellationToken)
         {
-            BeforeSend(data);
             var request = BuildRequest(resource, method, data);
             var response = await Client
                 .SendAsync(request, cancellationToken)

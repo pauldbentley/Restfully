@@ -71,14 +71,6 @@ namespace Restfully
         protected ISerializer Serializer { get; }
 
         /// <summary>
-        /// Perform any actions on the data before it is sent to the server.
-        /// </summary>
-        /// <param name="data">The data.</param>
-        protected virtual void BeforeSend(object data)
-        {
-        }
-
-        /// <summary>
         /// Gets a response object to be set on the returned entity.
         /// </summary>
         /// <param name="response">The API response.</param>
@@ -102,8 +94,6 @@ namespace Restfully
         /// <returns>An <see cref="IApiRequest"/> with the relevant information set.</returns>
         private protected IApiRequest BuildRequest(string resource, string method, object data)
         {
-            BeforeSend(data);
-
             var request = new ApiRequest(BaseUri, GetEndpointUri(resource))
             {
                 ContentType = ContentType ?? "text/json",

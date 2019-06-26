@@ -4,7 +4,7 @@
 namespace Restfully
 {
     /// <summary>
-    /// Defines service methods to serialize and deserialize JSON responses.
+    /// Defines methods to serialize and deserialize JSON responses.
     /// </summary>
     public interface ISerializer
     {
