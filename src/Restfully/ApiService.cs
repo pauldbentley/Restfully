@@ -35,7 +35,7 @@ namespace Restfully
         /// <param name="data">The data to supply with the request.</param>
         /// <returns>An object based on the server response.</returns>
         public TEntity GetRequest<TEntity>(object data) =>
-            RunRequest<TEntity>(string.Empty, "GET", data);
+            RunRequest<TEntity>(string.Empty, HttpGet, data);
 
         /// <summary>
         /// Performs a GET request to the specified resource with the specified data.
@@ -45,7 +45,7 @@ namespace Restfully
         /// <param name="data">The data to supply with the request.</param>
         /// <returns>An object based on the server response.</returns>
         public TEntity GetRequest<TEntity>(string resource, object data) =>
-            RunRequest<TEntity>(resource, "GET", data);
+            RunRequest<TEntity>(resource, HttpGet, data);
 
         /// <summary>
         /// Performs a POST request with the specified data.
@@ -54,7 +54,7 @@ namespace Restfully
         /// <param name="data">The data to supply with the request.</param>
         /// <returns>An object based on the server response.</returns>
         public TEntity PostRequest<TEntity>(object data) =>
-            RunRequest<TEntity>(string.Empty, "POST", data);
+            RunRequest<TEntity>(string.Empty, HttpPost, data);
 
         /// <summary>
         /// Performs a POST request to a specified resource with the specified data.
@@ -64,7 +64,7 @@ namespace Restfully
         /// <param name="data">The data to supply with the request.</param>
         /// <returns>An object based on the server response.</returns>
         public TEntity PostRequest<TEntity>(string resource, object data) =>
-            RunRequest<TEntity>(resource, "POST", data);
+            RunRequest<TEntity>(resource, HttpPost, data);
 
         private TEntity RunRequest<TEntity>(string resource, string method, object data)
         {

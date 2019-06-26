@@ -13,6 +13,16 @@ namespace Restfully
     public abstract class ApiServiceBase
     {
         /// <summary>
+        /// The HTTP verb for GET.
+        /// </summary>
+        public const string HttpGet = "GET";
+
+        /// <summary>
+        /// The HTTP verb for POST.
+        /// </summary>
+        public const string HttpPost = "POST";
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ApiServiceBase"/> class with the specified base URL and service path.
         /// </summary>
         /// <param name="baseUrl">The base URL of the API.</param>
@@ -108,12 +118,12 @@ namespace Restfully
                 request.Timeout = HttpTimeout.Value;
             }
 
-            if (method == "POST")
+            if (method == HttpPost)
             {
                 // for POST we add the JSON directly to the body
                 request.Body = Serializer.Serialize(data);
             }
-            else if (method == "GET")
+            else if (method == HttpGet)
             {
                 // for GET we add a query string parameters
                 // We serialize to JSON then back to an object so that
