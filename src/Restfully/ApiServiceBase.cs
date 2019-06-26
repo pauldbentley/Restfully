@@ -15,12 +15,12 @@ namespace Restfully
         /// <summary>
         /// The HTTP verb for GET.
         /// </summary>
-        public const string HttpGet = "GET";
+        private protected const string HttpGet = "GET";
 
         /// <summary>
         /// The HTTP verb for POST.
         /// </summary>
-        public const string HttpPost = "POST";
+        private protected const string HttpPost = "POST";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ApiServiceBase"/> class with the specified base URL and service path.
@@ -100,7 +100,7 @@ namespace Restfully
         /// <param name="method">The request method.</param>
         /// <param name="data">The data being sent with the request.</param>
         /// <returns>An <see cref="IApiRequest"/> with the relevant information set.</returns>
-        protected IApiRequest BuildRequest(string resource, string method, object data)
+        private protected IApiRequest BuildRequest(string resource, string method, object data)
         {
             BeforeSend(data);
 
@@ -147,19 +147,23 @@ namespace Restfully
         }
 
         /// <summary>
-        /// Gets the Endpoint URI for the given resource from the service path.
+        /// Builds the response to send back to the client.
         /// </summary>
-        /// <param name="resource">The resource being requested.</param>
-        /// <returns>A <see cref="Uri"/> pointing to the resource from the service path.</returns>
-        protected Uri GetEndpointUri(string resource) =>
+        /// <typeparam name="TEntity">The type of entity in the response.</typeparam>
+        /// <param name="response">The response from the server.</param>
+        /// <returns>A <typeparamref name="TEntity"/>.</returns>
+        private protected TEntity BuildResponse<TEntity>(IApiResponse response)
+        {
+            ThrowOnError(response);
+            var entity = Serializer.Deserialize<TEntity>(response.Content);
+            SetEntityResponse(response, entity);
+            return entity;
+        }
+
+        private Uri GetEndpointUri(string resource) =>
             new Uri(string.IsNullOrWhiteSpace(resource) ? Path : $"{Path}/{resource}", UriKind.Relative);
 
-        /// <summary>
-        /// Gets the entity response property on the entity.
-        /// </summary>
-        /// <param name="response">The response from the server.</param>
-        /// <param name="entity">The entity returned from the service.</param>
-        protected void SetEntityResponse(IApiResponse response, object entity)
+        private void SetEntityResponse(IApiResponse response, object entity)
         {
             if (entity == null)
             {
@@ -176,30 +180,12 @@ namespace Restfully
             EntityResponseHelper.SetResponse(entity, entityResponse);
         }
 
-        /// <summary>
-        /// If the response did not return an OK status, throws an Exception.
-        /// </summary>
-        /// <param name="response">The response from the service.</param>
-        protected void ThrowOnError(IApiResponse response)
+        private void ThrowOnError(IApiResponse response)
         {
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 throw HandleError(response);
             }
-        }
-
-        /// <summary>
-        /// Builds the response to send back to the client.
-        /// </summary>
-        /// <typeparam name="TEntity">The type of entity in the response.</typeparam>
-        /// <param name="response">The response from the server.</param>
-        /// <returns>A <typeparamref name="TEntity"/>.</returns>
-        protected TEntity BuildResponse<TEntity>(IApiResponse response)
-        {
-            ThrowOnError(response);
-            var entity = Serializer.Deserialize<TEntity>(response.Content);
-            SetEntityResponse(response, entity);
-            return entity;
         }
     }
 }

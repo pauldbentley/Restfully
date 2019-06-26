@@ -22,12 +22,5 @@ namespace Restfully
         /// <param name="value">A JSON string to deserialize.</param>
         /// <returns>An object deserialized from the JSON string.</returns>
         T Deserialize<T>(string value);
-
-        /// <summary>
-        /// Deserializes a JSON string to an object.
-        /// </summary>
-        /// <param name="value">A JSON string to deserialize.</param>
-        /// <returns>An object deserialized from the JSON string.</returns>
-        object Deserialize(string value);
     }
 }

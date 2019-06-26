@@ -4,11 +4,13 @@
 namespace Restfully
 {
     using System;
+    using System.Threading;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// Base class for a RESTful API service.
     /// </summary>
-    public class ApiService : ApiServiceBase, IApiService
+    public abstract class ApiService : ApiServiceBase, IApiService, IAsyncApiService
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ApiService"/> class with the specified base URL and service path.
@@ -17,7 +19,7 @@ namespace Restfully
         /// <param name="path">The path to the service from the base URL.</param>
         /// <param name="client">The RESTful client.</param>
         /// <param name="serializer">Service to serialize and deserialize JSON requests and responses.</param>
-        public ApiService(Uri baseUrl, string path, IApiClient client, ISerializer serializer)
+        protected ApiService(Uri baseUrl, string path, IApiClient client, ISerializer serializer)
             : base(baseUrl, path, serializer)
         {
             Client = client ?? throw new ArgumentNullException(nameof(client));
@@ -66,10 +68,64 @@ namespace Restfully
         public TEntity PostRequest<TEntity>(string resource, object data) =>
             RunRequest<TEntity>(resource, HttpPost, data);
 
+        /// <summary>
+        /// Performs a GET request with the specified data asynchronously.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of response data.</typeparam>
+        /// <param name="data">The data to supply with the request.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>An object based on the server response.</returns>
+        public async Task<TEntity> GetRequestAsync<TEntity>(object data, CancellationToken cancellationToken) =>
+            await RunRequestAsync<TEntity>(string.Empty, HttpGet, data, cancellationToken).ConfigureAwait(false);
+
+        /// <summary>
+        /// Performs a GET request to the specified resource with the specified data asynchronously.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of response data.</typeparam>
+        /// <param name="resource">The resource to post the data to.</param>
+        /// <param name="data">The data to supply with the request.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>An object based on the server response.</returns>
+        public async Task<TEntity> GetRequestAsync<TEntity>(string resource, object data, CancellationToken cancellationToken) =>
+            await RunRequestAsync<TEntity>(resource, HttpGet, data, cancellationToken).ConfigureAwait(false);
+
+        /// <summary>
+        /// Performs a POST request with the specified data asynchronously.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of response data.</typeparam>
+        /// <param name="data">The data to supply with the request.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>An object based on the server response.</returns>
+        public async Task<TEntity> PostRequestAsync<TEntity>(object data, CancellationToken cancellationToken) =>
+            await RunRequestAsync<TEntity>(string.Empty, HttpPost, data, cancellationToken).ConfigureAwait(false);
+
+        /// <summary>
+        /// Performs a POST request to the specified resource with the specified data asynchronously.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of response data.</typeparam>
+        /// <param name="resource">The resource to post the data to.</param>
+        /// <param name="data">The data to supply with the request.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>An object based on the server response.</returns>
+        public async Task<TEntity> PostRequestAsync<TEntity>(string resource, object data, CancellationToken cancellationToken) =>
+            await RunRequestAsync<TEntity>(resource, HttpPost, data, cancellationToken).ConfigureAwait(false);
+
         private TEntity RunRequest<TEntity>(string resource, string method, object data)
         {
+            BeforeSend(data);
             var request = BuildRequest(resource, method, data);
             var response = Client.Send(request);
+            return BuildResponse<TEntity>(response);
+        }
+
+        private async Task<TEntity> RunRequestAsync<TEntity>(string resource, string method, object data, CancellationToken cancellationToken)
+        {
+            BeforeSend(data);
+            var request = BuildRequest(resource, method, data);
+            var response = await Client
+                .SendAsync(request, cancellationToken)
+                .ConfigureAwait(false);
+
             return BuildResponse<TEntity>(response);
         }
     }
