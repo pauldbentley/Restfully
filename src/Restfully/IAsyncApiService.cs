@@ -23,9 +23,9 @@ namespace Restfully
     using System.Threading.Tasks;
 
     /// <summary>
-    /// A RESTful API service which can be sent async GET and POST requests.
+    /// A RESTful API service which can be sent asynchronous GET and POST requests.
     /// </summary>
-    public interface IAsyncRestApiService
+    public interface IAsyncApiService
     {
         /// <summary>
         /// Performs a GET request with the specified data asynchronously.

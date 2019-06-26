@@ -19,20 +19,31 @@
 // SOFTWARE.
 namespace Restfully
 {
-    using System.Threading;
-    using System.Threading.Tasks;
-
     /// <summary>
-    /// Generic client for sending sync HTTP requests to a RESTful API server.
+    /// Defines service methods to serialize and deserialize JSON responses.
     /// </summary>
-    public interface IAsyncRestApiClient : IRestApiClient
+    public interface ISerializer
     {
         /// <summary>
-        /// Sends the specified request and returns a response asynchronously.
+        /// Serializes a value to a JSON string.
         /// </summary>
-        /// <param name="restApiRequest">A <see cref="IRestApiRequest"/> that represents the HTTP request.</param>
-        /// <param name="cancellationToken">Used to cancel the request.</param>
-        /// <returns>A <see cref="Task" /> of <see cref="IRestApiResponse"/>.</returns>
-        Task<IRestApiResponse> SendAsync(IRestApiRequest restApiRequest, CancellationToken cancellationToken);
+        /// <param name="value">The value to serialize.</param>
+        /// <returns>A JSON string representation of the given value.</returns>
+        string Serialize(object value);
+
+        /// <summary>
+        /// Deserializes a JSON string to an object.
+        /// </summary>
+        /// <typeparam name="T">The type of value to deserialize.</typeparam>
+        /// <param name="value">A JSON string to deserialize.</param>
+        /// <returns>An object deserialized from the JSON string.</returns>
+        T Deserialize<T>(string value);
+
+        /// <summary>
+        /// Deserializes a JSON string to an object.
+        /// </summary>
+        /// <param name="value">A JSON string to deserialize.</param>
+        /// <returns>An object deserialized from the JSON string.</returns>
+        object Deserialize(string value);
     }
 }

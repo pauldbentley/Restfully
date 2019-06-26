@@ -22,7 +22,7 @@ namespace Restfully
     /// <summary>
     /// A RESTful API service which can be sent GET and POST requests.
     /// </summary>
-    public interface IRestApiService
+    public interface IApiService
     {
         /// <summary>
         /// Performs a GET request with the specified data.

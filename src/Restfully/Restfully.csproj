@@ -5,14 +5,14 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <CodeAnalysisRuleSet>Restfully.ruleset</CodeAnalysisRuleSet>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.0.1</Version>
+    <Version>0.0.2</Version>
     <Authors>Paul Bentley</Authors>
     <Company />
     <Description>A simple set of classes for building sync/async RESTful API clients</Description>
     <RepositoryUrl>https://github.com/pauldbentley/Restfully</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>REST,RESTful</PackageTags>
-    <FileVersion>0.0.1.2</FileVersion>
+    <FileVersion>0.0.2.1</FileVersion>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Copyright>Copyright(c) 2019 Paul Bentley</Copyright>
   </PropertyGroup>

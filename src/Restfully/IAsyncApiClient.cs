@@ -19,38 +19,20 @@
 // SOFTWARE.
 namespace Restfully
 {
-    using System.Net;
+    using System.Threading;
+    using System.Threading.Tasks;
 
     /// <summary>
-    /// Generic client for sending HTTP requests to a RESTful API server.
+    /// Generic client for sending asynchronous HTTP requests to a RESTful API server.
     /// </summary>
-    public interface IRestApiClient
+    public interface IAsyncApiClient
     {
         /// <summary>
-        /// Gets a value indicating whether redirects should be automatically followed.
+        /// Sends the specified request and returns a response asynchronously.
         /// </summary>
-        bool AllowAutoRedirect { get; }
-
-        /// <summary>
-        /// Gets a timeout in milliseconds to use for requests made by the client.
-        /// </summary>
-        int? HttpTimeout { get; }
-
-        /// <summary>
-        /// Gets a proxy to use for requests made to the service.
-        /// </summary>
-        IWebProxy Proxy { get; }
-
-        /// <summary>
-        /// Gets the content type.
-        /// </summary>
-        string ContentType { get; }
-
-        /// <summary>
-        /// Sends the specified request and returns a response.
-        /// </summary>
-        /// <param name="restApiRequest">A <see cref="IRestApiRequest"/> that represents the HTTP request.</param>
-        /// <returns>A <see cref="IRestApiResponse"/> representing the response from the server.</returns>
-        IRestApiResponse Send(IRestApiRequest restApiRequest);
+        /// <param name="restApiRequest">A <see cref="IApiRequest"/> that represents the HTTP request.</param>
+        /// <param name="cancellationToken">Used to cancel the request.</param>
+        /// <returns>A <see cref="Task" /> of <see cref="IApiResponse"/>.</returns>
+        Task<IApiResponse> SendAsync(IApiRequest restApiRequest, CancellationToken cancellationToken);
     }
 }

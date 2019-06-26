@@ -24,24 +24,22 @@ namespace Restfully
     using System.Net;
 
     /// <summary>
-    /// Defines a base service layer for a RESTful API service.
+    /// Defines a base class for a RESTful API service.
     /// </summary>
-    public abstract class RestApiServiceLayer
+    public abstract class ApiServiceBase
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="RestApiServiceLayer"/> class with the specified base URL and service path.
+        /// Initializes a new instance of the <see cref="ApiServiceBase"/> class with the specified base URL and service path.
         /// </summary>
         /// <param name="baseUrl">The base URL of the API.</param>
         /// <param name="path">The path to the service from the base URL.</param>
-        /// <param name="client">The RESTful client.</param>
         /// <param name="serializer">Service to serialize and deserialize JSON requests and responses.</param>
-        protected RestApiServiceLayer(Uri baseUrl, string path, IRestApiClient client, IJsonSerializationService serializer)
+        protected ApiServiceBase(Uri baseUrl, string path, ISerializer serializer)
         {
             BaseUri = baseUrl ?? throw new ArgumentNullException(nameof(baseUrl));
             Path = path;
 
             Serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
-            Client = client ?? throw new ArgumentNullException(nameof(client));
         }
 
         /// <summary>
@@ -55,14 +53,29 @@ namespace Restfully
         public Uri BaseUri { get; }
 
         /// <summary>
-        /// Gets the service to serialize/deserialize responses from the API.
+        /// Gets or sets a value indicating whether redirects should be automatically followed.
         /// </summary>
-        protected IJsonSerializationService Serializer { get; }
+        public bool AllowAutoRedirect { get; set; }
 
         /// <summary>
-        /// Gets the client to make requests to the API.
+        /// Gets or sets a timeout in milliseconds to use for requests made by the client.
         /// </summary>
-        protected IRestApiClient Client { get; }
+        public int? HttpTimeout { get; set; }
+
+        /// <summary>
+        /// Gets or sets a proxy to use for requests made to the service.
+        /// </summary>
+        public IWebProxy Proxy { get; set; }
+
+        /// <summary>
+        /// Gets or sets the content type.
+        /// </summary>
+        public string ContentType { get; set; }
+
+        /// <summary>
+        /// Gets the service to serialize/deserialize responses from the API.
+        /// </summary>
+        protected ISerializer Serializer { get; }
 
         /// <summary>
         /// Perform any actions on the data before it is sent to the server.
@@ -77,38 +90,38 @@ namespace Restfully
         /// </summary>
         /// <param name="response">The API response.</param>
         /// <returns>An object to be set on the returned entity.</returns>
-        protected virtual object GetEntityResponse(IRestApiResponse response) => default;
+        protected virtual object GetEntityResponse(IApiResponse response) => default;
 
         /// <summary>
         /// Returns an exception to throw when an error has occured.
         /// </summary>
         /// <param name="response">The response from the server.</param>
         /// <returns>A <see cref="Exception"/> object.</returns>
-        protected virtual Exception HandleError(IRestApiResponse response) =>
+        protected virtual Exception HandleError(IApiResponse response) =>
             response.ErrorException ?? new Exception(response.ErrorMessage);
 
         /// <summary>
-        /// Builds an <see cref="IRestApiRequest"/>.
+        /// Builds an <see cref="IApiRequest"/>.
         /// </summary>
         /// <param name="resource">The resource being requested.</param>
         /// <param name="method">The request method.</param>
         /// <param name="data">The data being sent with the request.</param>
-        /// <returns>An <see cref="IRestApiRequest"/> with the relevant information set.</returns>
-        protected IRestApiRequest BuildRequest(string resource, string method, object data)
+        /// <returns>An <see cref="IApiRequest"/> with the relevant information set.</returns>
+        protected IApiRequest BuildRequest(string resource, string method, object data)
         {
             BeforeSend(data);
 
-            var request = new RestApiRequest(BaseUri, GetEndpointUri(resource))
+            var request = new ApiRequest(BaseUri, GetEndpointUri(resource))
             {
-                ContentType = Client.ContentType ?? "text/json",
+                ContentType = ContentType ?? "text/json",
                 Method = method,
-                AllowAutoRedirect = Client.AllowAutoRedirect,
-                Proxy = Client.Proxy,
+                AllowAutoRedirect = AllowAutoRedirect,
+                Proxy = Proxy,
             };
 
-            if (Client.HttpTimeout.HasValue)
+            if (HttpTimeout.HasValue)
             {
-                request.Timeout = Client.HttpTimeout.Value;
+                request.Timeout = HttpTimeout.Value;
             }
 
             if (method == "POST")
@@ -138,17 +151,15 @@ namespace Restfully
         /// </summary>
         /// <param name="resource">The resource being requested.</param>
         /// <returns>A <see cref="Uri"/> pointing to the resource from the service path.</returns>
-        protected Uri GetEndpointUri(string resource)
-        {
-            return new Uri(string.IsNullOrWhiteSpace(resource) ? Path : $"{Path}/{resource}", UriKind.Relative);
-        }
+        protected Uri GetEndpointUri(string resource) =>
+            new Uri(string.IsNullOrWhiteSpace(resource) ? Path : $"{Path}/{resource}", UriKind.Relative);
 
         /// <summary>
         /// Gets the entity response property on the entity.
         /// </summary>
         /// <param name="response">The response from the server.</param>
         /// <param name="entity">The entity returned from the service.</param>
-        protected void SetEntityResponse(IRestApiResponse response, object entity)
+        protected void SetEntityResponse(IApiResponse response, object entity)
         {
             if (entity == null)
             {
@@ -169,7 +180,7 @@ namespace Restfully
         /// If the response did not return an OK status, throws an Exception.
         /// </summary>
         /// <param name="response">The response from the service.</param>
-        protected void ThrowOnError(IRestApiResponse response)
+        protected void ThrowOnError(IApiResponse response)
         {
             if (response.StatusCode != HttpStatusCode.OK)
             {
@@ -183,7 +194,7 @@ namespace Restfully
         /// <typeparam name="TEntity">The type of entity in the response.</typeparam>
         /// <param name="response">The response from the server.</param>
         /// <returns>A <typeparamref name="TEntity"/>.</returns>
-        protected TEntity BuildResponse<TEntity>(IRestApiResponse response)
+        protected TEntity BuildResponse<TEntity>(IApiResponse response)
         {
             ThrowOnError(response);
             var entity = Serializer.Deserialize<TEntity>(response.Content);

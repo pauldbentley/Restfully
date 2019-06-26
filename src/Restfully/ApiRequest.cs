@@ -26,14 +26,14 @@ namespace Restfully
     /// <summary>
     /// Represents a request which can be sent to a RESTful API service.
     /// </summary>
-    public class RestApiRequest : IRestApiRequest
+    public class ApiRequest : IApiRequest
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="RestApiRequest"/> class.
+        /// Initializes a new instance of the <see cref="ApiRequest"/> class.
         /// </summary>
         /// <param name="baseAddress">The base address of the REST API to request.</param>
         /// <param name="endpoint">The end point of the service to request.</param>
-        public RestApiRequest(Uri baseAddress, Uri endpoint)
+        public ApiRequest(Uri baseAddress, Uri endpoint)
         {
             BaseAddress = baseAddress ?? throw new ArgumentNullException(nameof(baseAddress));
             Endpoint = endpoint ?? throw new ArgumentNullException(nameof(endpoint));

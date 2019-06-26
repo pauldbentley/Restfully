@@ -26,7 +26,7 @@ namespace Restfully
     /// <summary>
     /// Represents a response from a RESTful API service.
     /// </summary>
-    public interface IRestApiResponse
+    public interface IApiResponse
     {
         /// <summary>
         /// Gets or sets the response body.
